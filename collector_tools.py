@@ -54,15 +54,3 @@ def generateList(ip_range):
         oct4_range = octets[3].split('-')
         ip_list = [f"{octets[0]}.{octets[1]}.{octets[2]}.{oct4}" for oct4 in range(int(oct4_range[0]),int(oct4_range[1])+1)]
     return ip_list
-
-def progressbar(it, prefix="", size=60, out=sys.stdout):
-    count = len(it)
-    def show(j):
-        x = int(size*j/count)
-        print("{}[{}{}] {}/{}".format(prefix, "#"*x, "."*(size-x), j, count), 
-                end='\r', file=out, flush=True)
-    show(0)
-    for i, item in enumerate(it):
-        yield item
-        show(i+1)
-    print("\n", flush=True, file=out)
