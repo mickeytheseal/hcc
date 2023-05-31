@@ -1,6 +1,7 @@
 import requests
 import urllib3
 urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
+import exception
 
 
 def collect(ip,login,password):
@@ -15,7 +16,9 @@ def collect(ip,login,password):
   headers = {
     'Content-Type': 'text/plain'
   }
-  response = s.request("POST", url, headers=headers, data=payload, verify=False)
+  response = s.request("POST", url, headers=headers, data=payload, verify=False, timeout=3)
+  if response.status_code == 403:
+    raise  exception.WrongCredentials
 
   ## summary
   url = f"https://{ip}/json/overview?"
@@ -81,6 +84,3 @@ def collect(ip,login,password):
 
   return srv_data
 
-if __name__ == "__main__":
-  data = collect("172.24.1.114","crocadmin","adminadmin")
-  print(data)

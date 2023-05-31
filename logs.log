@@ -1,0 +1,7 @@
+2023-05-31 21:41:59,440 | INFO | Getting data using file
+2023-05-31 21:42:02,445 | ERROR | Connection timeout for 172.24.1.110
+2023-05-31 21:42:05,461 | ERROR | Connection timeout for 172.24.1.124
+2023-05-31 21:42:08,470 | ERROR | Connection timeout for 172.24.1.50
+2023-05-31 21:42:10,743 | INFO | Collected data from 172.24.1.114 iLO 4
+2023-05-31 21:42:14,409 | INFO | Collected data from 172.24.1.5 iLO 4
+2023-05-31 21:42:18,047 | INFO | Collected data from 172.24.1.43 iLO 4
