@@ -6,6 +6,7 @@ import logging
 import json
 import sys
 import argparse
+from progress.bar import Bar
 
 ## Configure logging
 logger = collector_tools.getCustomLogger()
@@ -28,15 +29,18 @@ if args.file is not None:
 	logging.info("Getting data using file")
 elif args.range is not None and args.login is not None and args.password is not None:
 	iLOs = collector_tools.generateList(args.range)	## Generate IP list
-	print(iLOs)
 	input_method = 1
 	logging.info("Getting data using range")
 
 if args.debug:
 	sys.exit()
 
+bar = Bar('Collecting data', max=len(iLOs))
+
 ## Get data from iLO
 for srv in iLOs:
+	bar.next()
+
 	ip = None
 	login = None
 	password = None
@@ -66,3 +70,4 @@ for srv in iLOs:
 		logging.error(f"Wrong credentials for {ip}")
 		continue
 	collector_tools.saveToJSON(data)
+bar.finish()
