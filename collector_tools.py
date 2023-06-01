@@ -54,3 +54,10 @@ def generateList(ip_range):
         oct4_range = octets[3].split('-')
         ip_list = [f"{octets[0]}.{octets[1]}.{octets[2]}.{oct4}" for oct4 in range(int(oct4_range[0]),int(oct4_range[1])+1)]
     return ip_list
+
+def dirToExcel(pathtoDir):
+    for filename in os.listdir(pathtoDir):
+        with open(os.path.join(pathtoDir, filename), 'r') as f:
+            data = json.load(f)
+            simplifyJson(data)
+            ## еще пилю
