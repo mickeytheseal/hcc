@@ -32,6 +32,9 @@ elif args.range is not None and args.login is not None and args.password is not 
 	input_method = 1
 	logging.info("Getting data using range")
 
+##toExcel debug
+collector_tools.dirToExcel(r"C:\Users\MUntura\Desktop\UltimateHPEParser\output\test")
+
 if args.debug:
 	sys.exit()
 
