@@ -26,6 +26,7 @@ if args.output == None:
 else:
 	output_dir = args.output
 
+output_path = os.path.join(output_dir,"output.xlsx")
 
 to_convert = []
 
@@ -36,10 +37,18 @@ for f in os.listdir(input_dir):
 servers = []
 
 for path in to_convert:
-	servers.append(srv.Server(path))
+	servers.append(srv.ReportRecord(srv.Server(path)))
 
 df = pd.DataFrame([rec.__dict__ for rec in servers]).astype('str')
 
+
+
+print(list(df.columns))
+
+df[list(df.columns)] = df[list(df.columns)].replace({'{': ''}, regex=True)
+df[list(df.columns)] = df[list(df.columns)].replace({'}': ''}, regex=True)
+
+
 print(df)
 
-df.to_excel(r'C:\Users\micke\Desktop\UltimateHPEParser\jsonToExcel\output\output.xlsx', sheet_name='Your sheet name', index=False)
+df.to_excel(output_path, sheet_name='Hardware', index=False)

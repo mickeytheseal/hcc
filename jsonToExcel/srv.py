@@ -2,10 +2,13 @@ import json
 
 class Processor():
   def __init__(self,jsonobj):
-    self.name = jsonobj["proc_name"]
+    self.name = jsonobj["proc_name"].strip()
   
   def __eq__(self, other):
-    return self.name == other.name
+    return isinstance(other, Processor) and self.name == other.name
+
+  def __hash__(self):
+        return hash(self.name)
 
   def __repr__(self):
     return self.name
@@ -17,10 +20,13 @@ class Memory():
     self.tech = jsonobj["mem_mod_tech"]
     self.frequency = jsonobj["mem_mod_frequency"]
     self.ranks = jsonobj["mem_mod_ranks"]
-    self.part_num = jsonobj["mem_mod_part_num"]
+    self.part_num = jsonobj["mem_mod_part_num"].strip()
   
   def __eq__(self, other):
-    return self.name == other.name
+    return isinstance(other, Memory) and self.size == other.size and self.type == other.type and self.tech == other.tech and self.frequency == other.frequency and self.ranks == other.ranks
+
+  def __hash__(self):
+    return hash((self.size,self.type,self.tech,self.frequency,self.ranks))
 
   def __repr__(self):
     return str(self.size) + " " + self.type + " " + self.tech + " " + str(self.frequency) + " " + str(self.ranks) + "rank " + self.part_num
@@ -30,14 +36,16 @@ class Drive():
     self.name = jsonobj["model"]
   
   def __eq__(self, other):
-    return self.name == other.name
+    return isinstance(other, Drive) and self.name == other.name
+
+  def __hash__(self):
+    return hash(self.name)
 
   def __repr__(self):
     return self.name
 
 class Controller():
   def __init__(self,jsonobj):
-    self.sn = jsonobj["serial_no"]
     self.name = jsonobj["model"]
     if jsonobj["has_accel"] == 1:
       self.cache = jsonobj["accel_tot_mem"]
@@ -46,17 +54,23 @@ class Controller():
     self.drvs = [Drive(jsondrv) for jsondrv in jsonobj["physical_drives"]]
   
   def __eq__(self, other):
-    return self.name == other.name
+    return isinstance(other, Controller) and self.name == other.name
+
+  def __hash__(self):
+    return hash((self.name,self.cache,tuple(self.drvs)))
 
   def __repr__(self):
-    return self.name + " " + str(self.cache) + "KB cache"
+    return self.name + " " + str(self.cache) + " cache"
 
 class NIC():
   def __init__(self,jsonobj):
     self.name = jsonobj["name"]
   
   def __eq__(self, other):
-    return self.name == other.name
+    return isinstance(other, NIC) and self.name == other.name
+
+  def __hash__(self):
+    return hash(self.name)
 
   def __repr__(self):
     return self.name
@@ -68,7 +82,10 @@ class PCI():
     self.spn = jsonobj["board_num"]
   
   def __eq__(self, other):
-    return self.name == other.name 
+    return isinstance(other, PCI) and self.name == other.name 
+
+  def __hash__(self):
+    return hash(self.name)
 
   def __repr__(self):
     return self.name + " " + self.spn
@@ -79,7 +96,10 @@ class PSU():
     self.spn = jsonobj["ps_spare"]
   
   def __eq__(self, other):
-    return self.name == other.name   
+    return isinstance(other, PSU) and self.name == other.name   
+
+  def __hash__(self):
+        return hash(self.name)
 
   def __repr__(self):
     return self.name + " " + self.spn
@@ -102,4 +122,31 @@ class Server:
     self.psus = [PSU(jsonpsu) for jsonpsu in jsondata["psu"]["supplies"] if jsonpsu["ps_error_code"] != "PS_STATUS_UNKNOWN"]
 
   def __eq__(self, other):
-    return self.sn == other.sn
+    return isinstance(other, Server) and self.sn == other.sn
+
+  def __hash__(self):
+        return hash(self.sn)
+
+
+def countAndRemove(data):
+  result = {}
+  for obj in data:
+    if obj in result.keys():
+      result[obj] += 1
+    else:
+      result[obj] = 1
+  return(result)
+
+class ReportRecord:
+  def __init__(self,server):
+    self.name = server.name
+    self.pid = server.pid
+    self.sn = server.sn
+    self.cpu = countAndRemove(server.cpus)
+    self.ram = countAndRemove(server.mems)
+    self.ctrl = countAndRemove(server.ctrls)
+    drv_list = sum([drv for drv in [ctrl.drvs for ctrl in server.ctrls]],[])
+    self.drv = countAndRemove(drv_list)
+    self.nic = countAndRemove(server.nics)
+    self.pci = countAndRemove(server.pcis)
+    self.psu = countAndRemove(server.psus)
