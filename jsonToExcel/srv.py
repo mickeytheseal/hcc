@@ -29,7 +29,10 @@ class Memory():
     return hash((self.size,self.type,self.tech,self.frequency,self.ranks))
 
   def __repr__(self):
-    return str(self.size) + " " + self.type + " " + self.tech + " " + str(self.frequency) + " " + str(self.ranks) + "rank " + self.part_num
+    if self.part_num == "NOT AVAILABLE":
+      return str(self.size) + " " + self.type + " " + self.tech + " " + str(self.frequency) + " " + str(self.ranks) + "rank "
+    else:
+      return self.part_num
 
 class Drive():
   def __init__(self,jsonobj):
