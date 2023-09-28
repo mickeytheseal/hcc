@@ -18,6 +18,7 @@ parser.add_argument("-d", "--delimeter", help="Delimeter for input file. Default
 parser.add_argument("-r", "--range", help="iLO IP range")
 parser.add_argument("-l", "--login", help="Default login for range")
 parser.add_argument("-p", "--password", help="Default password for range")
+parser.add_argument("-e", "--error", help="Error detection mode",action='store_true')
 parser.add_argument("-dm", "--debug", help="Debug mode",action='store_true')
 
 args = parser.parse_args()
@@ -58,7 +59,10 @@ for srv in iLOs:
 		password = args.password
 
 	try:
-		data = ilo4_5.collect(ip,login,password)
+		if args.error:
+			##collect errors
+		else:
+			data = ilo4_5.collect(ip,login,password) ##collect configuration
 		logging.info(f"Collected data from {ip} {collector_tools.getIloVer(ip)}")
 	except requests.exceptions.ConnectTimeout:
 		logging.error(f"Connection timeout for {ip}")

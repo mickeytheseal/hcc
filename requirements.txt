@@ -1,3 +1,4 @@
+pandas==2.0.2
 progress==1.6
 Requests==2.31.0
-urllib3==2.0.2
+urllib3==2.0.3
