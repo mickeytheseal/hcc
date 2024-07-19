@@ -1,91 +1,87 @@
 # HPE Configuration Collector (HCC)
 
-HCC позволяет собирать информацию о конфигурации оборудования напрямую из iLO,
-используя при этом базовые запросы, аналогичные запросам пользователя к менеджменту в браузере.
+HCC allows collecting hardware configuration information directly from iLO using basic requests, similar to user queries to management in a browser.
 
-## Принцип работы
-HCC взаимодействует с iLO напрямую, что позволяет собирать всю информацию, которую пользователь может там увидеть.
-Первым делом скрипт отправляет POST-запрос на логин и получет session-token, который используется в дальнейшем взаимодействии.
-Далее скрипт GET-запросами обходит каждый endpoint (по одному на позицию собираемой информации) и получает от сервера json-объекты,
-содержащие необходимую информацию о конфигурации. Json-объекты собираются в общий Json-файл, который сохраняется в папку /output 
-с серийным номером сервера в качестве имени. После этого скрипт закрывает соединение и переходит к следующему серверу в списке.
+## How it works
+HCC interacts directly with iLO, enabling the collection of all information a user can see there. First, the script sends a POST request for login and receives a session token, which is used for further interactions. Then, the script uses GET requests to access each endpoint (one per position of collected information) and retrieves JSON objects containing the necessary configuration information. These JSON objects are compiled into a single JSON file, which is saved in the /output folder with the server's serial number as the filename. After this, the script closes the connection and moves on to the next server in the list.
 
-При написании скрипта запросы собирались в браузере и обрабатывались через Postman. 
-Коллекцию Postman для iLO можно скачать [здесь](https://breakdance.github.io/breakdance/).
+## Collected Information:
+- System Summary
+- CPU
+- RAM
+- Storage
+- NIC
+- PCI
+- PSU
 
-## Cобираемая информация:
- - System Summary
- - CPU
- - RAM
- - Storage
- - NIC
- - PCI
- - PSU
+## Supported Hardware
 
-## Поддерживаемое оборудование
+- HPE servers running iLO4
+- HPE servers running iLO5
+- Blade enclosures c7000 (in development)
 
-- Серверы HPE под управлением iLO4
-- Серверы HPE под управлением iLO5
-- Блейд-корзины c7000 (в разработке)
+## Installation
 
-## Установка
-
-Для выполненения скрипта требуется Python3 и ряд дополнительных библиотек:
+The script requires Python3 and several additional libraries:
 - progress==1.6
 - Requests==2.31.0
 - urllib3==2.0.2
 
-Установить библиотеки по отдельности можно командой:
+You can install the libraries individually using the command:
 ```sh
 pip install ИмяБиблиотеки
 ```
-Либо все библиотеки разом, используя requirements.txt (находится в корне репозитория):
+Or all libraries at once using requirements.txt (located at the root of the repository):
 ```sh
 pip install -r /path/to/requirements.txt
 ```
 
-Скачать сам скрипт можно [тут](https://breakdance.github.io/breakdance/).
-
 ## Input-файл
-На вход скрипт может принимать  .csv файл следующего формата:
+The script can accept a .csv file with the following format as input:
 ```sh
 ip;login;password
 172.24.1.1;testlogin;testpass
 172.24.1.2;logintest;passtest
 .....
 ```
-Пример файла также можно посмотреть [здесь](https://breakdance.github.io/breakdance/). Стандартный разделить - ; . При желании можно использовать любой другой, но нужно будет указать его при запуске скрипта.
+The default delimiter is ;. You can use any other delimiter, but you will need to specify it when running the script.
 
-## Запуск
-Скрипт принимает на вход следующие аргументы:
-| Параметр | Описание | 
+## Usage
+The script accepts the following arguments:
+| Parameter | Description | 
 | ------ | ------ |
-| -f | Путь к файлу input.csv |
-| -d | Кастомный разделитель для input.csv  . По-умолчанию - ; |
-| -r | Диапазон ip-адресов для сбора со стандартными логинам-паролями без input.csv |
-| -l | Стандартный логин |
-| -p | Стандартный пароль |
+| -f | Path to the input.csv file |
+| -d | Custom delimiter for input.csv. Default is ; |
+| -r | IP address range for collection with standard logins and passwords without input.csv |
+| -l | Standard login |
+| -p | Standard password |
 | -dm | Debug mode |
-**Параметры -f и -d не могут использоваться совместно с параметрами -r, -l, -p.**
-## Примеры
-Запуск с файлом, содержащим ip-адреса iLO, логины и пароли:
+**Parameters -f and -d cannot be used together with parameters -r, -l, -p**
+
+## Examples
+Run with a file containing iLO IP addresses, logins, and passwords:
 ```sh
 python start.py -f C:\Users\micke\Desktop\UltimateHPEParser\input.csv
 ```
-Запуск с файлом, содержащим ip-адреса iLO, логины и пароли + кастомный разделитель:
+Run with a file containing iLO IP addresses, logins, and passwords + custom delimiter:
 ```sh
 python start.py -f C:\Users\micke\Desktop\UltimateHPEParser\input.csv -d .
 ```
-Запуск с ip-диапазоном на последнем октете и одинаковыми логинами-паролями:
+Run with an IP range in the last octet and identical logins-passwords:
 ```sh
 python start.py -r 172.24.0.1-50 -l testlogin -p testpass 
 ```
-Запуск с ip-диапазоном в нотации CIDR и одинаковыми логинами-паролями:
+Run with an IP range in CIDR notation and identical logins-passwords:
 ```sh
 python start.py -r 172.24.0.0/28 -l testlogin -p testpass 
 ```
 
 ## Output-файлы
-После работы скрипта сгенерируется папка /output , содержащая информацию о конфигурации оборудования в формате .json .
-Также появится файл logs.log . Необходимо скопировать этот файл в папку /output и заархивировать любым доступным архиватором.
+After the script runs, it will generate an /output folder containing configuration information in .json format. A logs.log file will also appear. You need to copy this file to the /output folder and archive it using any available archiver.
+To convert output json file to excel format use:
+```sh
+python convert.py -i <PathToInput> -o <PathToOutput>
+```
+<PathToInput> - path to the folder with collected json files. Mandatory parameter
+<PathToOutput> - path to the folder where the resulting table will be saved. Optional parameter, by default it will be saved in /output
 
