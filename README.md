@@ -36,7 +36,7 @@ Or all libraries at once using requirements.txt (located at the root of the repo
 pip install -r /path/to/requirements.txt
 ```
 
-## Input-файл
+## Input
 The script can accept a .csv file with the following format as input:
 ```sh
 ip;login;password
@@ -76,7 +76,7 @@ Run with an IP range in CIDR notation and identical logins-passwords:
 python start.py -r 172.24.0.0/28 -l testlogin -p testpass 
 ```
 
-## Output-файлы
+## Output
 After the script runs, it will generate an /output folder containing configuration information in .json format. A logs.log file will also appear. You need to copy this file to the /output folder and archive it using any available archiver.
 To convert output json file to excel format use:
 ```sh
