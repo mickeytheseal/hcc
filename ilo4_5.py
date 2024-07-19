@@ -27,49 +27,19 @@ def collect(ip,login,password):
   response = s.request("GET", url, headers=headers, data=payload, verify=False)
   srv_data["summary"] = response.json()
 
-
-  ## cpu
-  url = f"https://{ip}/json/proc_info"
-  payload = {}
-  headers = {}
-  response = s.request("GET", url, headers=headers, data=payload, verify=False)
-  srv_data["cpu"] = response.json()
-
-  ## ram
-  url = f"https://{ip}/json/mem_info"
-  payload = {}
-  headers = {}
-  response = s.request("GET", url, headers=headers, data=payload, verify=False)
-  srv_data["ram"] = response.json()
-
-  ## storage
-  url = f"https://{ip}/json/health_phy_drives"
-  payload = {}
-  headers = {}
-  response = s.request("GET", url, headers=headers, data=payload, verify=False)
-  srv_data["storage"] = response.json()
-
-  ## nic
-  url = f"https://{ip}/json/comm_controller_info"
-  payload = {}
-  headers = {}
-  response = s.request("GET", url, headers=headers, data=payload, verify=False)
-  srv_data["nic"] = response.json()
-
-  ## pci
-  url = f"https://{ip}/json/pci_info"
-  payload = {}
-  headers = {}
-  response = s.request("GET", url, headers=headers, data=payload, verify=False)
-  srv_data["pci"] = response.json()
-
-  ## psu
-  url = f"https://{ip}/json/power_supplies"
-  payload = {}
-  headers = {}
-  response = s.request("GET", url, headers=headers, data=payload, verify=False)
-  srv_data["psu"] = response.json()
-
+  fru_list = {f"https://{ip}/json/overview?": "summary",
+                f"https://{ip}/json/proc_info": "cpu",
+                f"https://{ip}/json/mem_info": "ram",
+                f"https://{ip}/json/health_phy_drives": "storage",
+                f"https://{ip}/json/comm_controller_info": "nic",
+                f"https://{ip}/json/pci_info": "pci",
+                f"https://{ip}/json/power_supplies": "psu"}
+  for unit in list(fru_list.items()):
+    url = unit[0]
+    payload = {}
+    headers = {}
+    response = s.request("GET", url, headers=headers, data=payload, verify=False)
+    srv_data[unit[1]] = response.json()
 
   ## logout
   url = f"https://{ip}/json/login_session"
