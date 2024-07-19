@@ -82,6 +82,9 @@ To convert output json file to excel format use:
 ```sh
 python convert.py -i <PathToInput> -o <PathToOutput>
 ```
+
+PathToInput - path to the folder with collected json files. Mandatory parameter
+PathToOutput - path to the folder where the resulting table will be saved. Optional parameter, by default it will be saved in /output
 <PathToInput> - path to the folder with collected json files. Mandatory parameter
 <PathToOutput> - path to the folder where the resulting table will be saved. Optional parameter, by default it will be saved in /output
 
